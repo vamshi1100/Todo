@@ -1,113 +1,81 @@
 import { model } from "./model.js";
+// Function to render an individual item, including the category
+function renderItem(item, index) {
+  const p = document.createElement("p");
+  p.textContent = item.text;
 
-// Function to add an item to the model
-export function addItem() {
-  let input = document.getElementById("input").value;
-  return input;
-}
-
-// Function to create a checkbox element
-function createCheckbox(index, checkedState) {
-  let checked = document.createElement("input");
+  const checked = document.createElement("input");
   checked.type = "checkbox";
-  checked.id = `completed-${index}`;
-  checked.className = "completed";
-  checked.checked = checkedState;
-
-  // Update the display when checkbox changes
+  checked.checked = item.checked;
   checked.addEventListener("change", () => {
-    let pElement = document.getElementById(`text-${index}`);
-    if (checked.checked) {
-      pElement.style.textDecoration = "line-through";
-    } else {
-      pElement.style.textDecoration = "none";
-    }
     model.updateCheckedState(index, checked.checked);
   });
 
-  return checked;
-}
-
-// Function to create a delete button
-function createDeleteButton(index) {
-  let delbtn = document.createElement("button");
-  delbtn.innerText = "Delete";
-  delbtn.addEventListener("click", (e) => {
-    e.stopPropagation();
+  const delbtn = document.createElement("button");
+  delbtn.textContent = "Delete";
+  delbtn.addEventListener("click", () => {
     model.deleteItem(index);
-    display(model.data); // Re-render the list after deleting the item
+    display(model.data);
   });
 
-  return delbtn;
-}
+  // Display the start and end date
+  const startDate = document.createElement("span");
+  startDate.textContent = `Start: ${item.startDate || "N/A"}`;
+  const endDate = document.createElement("span");
+  endDate.textContent = `End: ${item.endDate || "N/A"}`;
 
-// Function to render individual item
-function renderItem(element, index) {
-  let p = document.createElement("p");
-  p.innerText = element.text || "Default Name";
-  p.id = `text-${index}`;
+  // Display the category of the todo item
+  const category = document.createElement("span");
+  category.textContent = `Category: ${item.category || "None"}`;
 
-  if (element.checked) {
-    p.style.textDecoration = "line-through";
-  } else {
-    p.style.textDecoration = "none";
-  }
-
-  const checked = createCheckbox(index, element.checked);
-  const delbtn = createDeleteButton(index);
-
-  // Add event listener for editing
-  p.addEventListener("click", () => {
-    document.getElementById("input").value = element.text;
-    document.getElementById("input").dataset.index = index;
-  });
-
-  return { p, checked, delbtn };
+  // Return the elements that will be appended to the display
+  return { p, checked, delbtn, startDate, endDate, category };
 }
 
 // Function to display all items
 export function display(getdata) {
   let addcontainer = document.getElementById("addcontainer");
-  let displayop = document.getElementById("displayop");
-  displayop.innerHTML = "";
+  addcontainer.innerHTML = "";
 
   getdata.forEach((element, index) => {
-    const { p, checked, delbtn } = renderItem(element, index); // Render individual item
+    let displayop = document.createElement("div");
+    displayop.classList.add("todo-item");
+    const { p, checked, delbtn, startDate, endDate, category } = renderItem(
+      element,
+      index
+    );
 
-    displayop.appendChild(checked);
-    displayop.appendChild(p);
-    displayop.appendChild(delbtn);
+    // Create divs for chekbox, start date, end date, and category etc
+    let checkboxDiv = document.createElement("div");
+    checkboxDiv.classList.add("items");
+    checkboxDiv.appendChild(checked); // Checkbox
+    displayop.appendChild(checkboxDiv);
+
+    let textDiv = document.createElement("div");
+    textDiv.classList.add("items");
+    textDiv.appendChild(p); // Todo text
+    displayop.appendChild(textDiv);
+
+    let buttonDiv = document.createElement("div");
+    buttonDiv.classList.add("items");
+    buttonDiv.appendChild(delbtn); // Delete button
+    displayop.appendChild(buttonDiv);
+
+    let startDateDiv = document.createElement("div");
+    startDateDiv.classList.add("items");
+    startDateDiv.appendChild(startDate); // Start date
+    displayop.appendChild(startDateDiv);
+
+    let endDateDiv = document.createElement("div");
+    endDateDiv.classList.add("items");
+    endDateDiv.appendChild(endDate); // End date
+    displayop.appendChild(endDateDiv);
+
+    let categoryDiv = document.createElement("div");
+    categoryDiv.classList.add("items");
+    categoryDiv.appendChild(category); // Category
+    displayop.appendChild(categoryDiv);
+
+    addcontainer.appendChild(displayop);
   });
-  addcontainer.appendChild(displayop);
 }
-
-document.getElementById("filterall").addEventListener("click", () => {
-  display(model.data);
-});
-
-document.getElementById("filtercompleted").addEventListener("click", () => {
-  let op = model.data;
-  let filterop = op.filter((elem) => {
-    return elem.checked == true;
-  });
-  display(filterop);
-});
-
-document.getElementById("filternotcompleted").addEventListener("click", () => {
-  let op = model.data;
-  let filterop = op.filter((elem) => {
-    return elem.checked == false;
-  });
-  display(filterop);
-});
-
-document.getElementById("search").addEventListener("input", () => {
-  let searchTerm = document.getElementById("search").value.toLowerCase();
-  let op = model.data;
-
-  let filterop = op.filter((elem) => {
-    return elem.text.toLowerCase().includes(searchTerm);
-  });
-
-  display(filterop);
-});

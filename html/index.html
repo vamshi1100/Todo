@@ -7,20 +7,25 @@
     <link rel="stylesheet" href="../css/index.css" />
   </head>
   <body>
-    <div class="container">
-      <div>
-        <h1>Todo</h1>
-      </div>
-      <div id="firstcontainer">
-        <input type="text" id="input" placeholder="Enter some data" />
-        <button id="add">Add</button>
-        <div class="datebetween">
-          <input type="date" id="startDate" value="2024-01-01" />
-          <input type="date" id="endDate" value="2025-12-31" />
+    <div class="maincontainer">
+      <div class="container">
+        <div>
+          <h1>Todo</h1>
         </div>
-      </div>
-      <div id="addcontainer">
-        <div id="displayop"></div>
+        <div id="firstcontainer">
+          <input type="text" id="input" placeholder="Enter some data" />
+          <button id="add">Add</button>
+          <div class="datebetween">
+            <input type="date" id="startDate" class="datepick" />
+            <input type="date" id="endDate" class="datepick" />
+          </div>
+          <div class="groupby">
+            <button id="work" class="groupbybtn">Work</button>
+            <button id="home" class="groupbybtn">Home</button>
+            <button id="personal" class="groupbybtn">Personal</button>
+          </div>
+        </div>
+        <div id="addcontainer"></div>
       </div>
       <div class="features">
         <div class="filter">
@@ -29,23 +34,30 @@
           <button id="filtercompleted">completed</button>
           <button id="filternotcompleted">not completed</button>
         </div>
+
         <div class="search">
+          <h1>search</h1>
           <input
             type="text"
             id="search"
             placeholder="enter something to search" />
         </div>
-        <div class="groupby">
-          <div class="filterdate">
-            <input type="date" id="filterstartDate" />
-            <input type="date" id="filterendDate" />
-          </div>
-          <button>work</button>
-          <button>Home</button>
-          <button>personal</button>
+        <div class="filterdate">
+          <h1>Date Range Filter</h1>
+          <input type="date" id="filterStartDate" />
+          <input type="date" id="filterEndDate" />
+          <button id="filterBtn">Filter</button>
+        </div>
+
+        <div class="groupbycategory">
+          <h1>groupby</h1>
+          <button id="workg" class="groupbycategoryfilter">Work</button>
+          <button id="homeg" class="groupbycategoryfilter">Home</button>
+          <button id="personalg" class="groupbycategoryfilter">Personal</button>
         </div>
       </div>
     </div>
+
     <script type="module" src="../js/controller.js"></script>
     <!-- <script type="module" src="../js/view.js"></script> -->
     <!-- <script type="module" src="../js/model.js"></script> -->
