@@ -1,0 +1,142 @@
+import { model } from "../js/model.js";
+import { view } from "../js/view.js";
+
+model.category.forEach((category) => {
+  view.setEventListener(category, "click", () => {
+    model.currentCategory = category;
+    console.log(category);
+  });
+});
+
+view.setEventListener("add", "click", () => {
+  let inputValue = view.getElement("input").value.trim();
+  let index = view.getElement("input").dataset.index;
+
+  const startDateInput = view.getElement("startDate");
+  const endDateInput = view.getElement("endDate");
+
+  let startDate = startDateInput.value;
+  let endDate = endDateInput.value;
+
+  if (inputValue && model.currentCategory) {
+    if (index !== undefined) {
+      model.updateItem(
+        index,
+        inputValue,
+        startDate,
+        endDate,
+        model.currentCategory
+      );
+    } else {
+      model.addItem(inputValue, startDate, endDate, model.currentCategory);
+    }
+    view.display(model.data); // Use `view.display` here
+  } else {
+    console.log("No input or category selected.");
+  }
+
+  view.getElement("input").value = "";
+  delete view.getElement("input").dataset.index;
+});
+
+const filters = {
+  all: () => model.data,
+  completed: () => model.data.filter((elem) => elem.checked === true),
+  notCompleted: () => model.data.filter((elem) => elem.checked === false),
+  category: (category) =>
+    model.data.filter((item) => item.category === category),
+  search: (searchTerm) => {
+    console.log("Searching for:", searchTerm);
+    return model.data.filter((elem) => {
+      console.log("Item:", elem);
+      return (
+        elem.text && elem.text.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+  },
+
+  dateRange: (startDate, endDate) => {
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+
+    console.log("Filtering by Date Range:", start, end);
+
+    return model.data.filter((item) => {
+      const itemStartDate = item.startDate ? new Date(item.startDate) : null;
+      const itemEndDate = item.endDate ? new Date(item.endDate) : null;
+
+      const isStartDateValid = start ? itemStartDate >= start : true;
+      const isEndDateValid = end ? itemEndDate <= end : true;
+
+      return isStartDateValid && isEndDateValid;
+    });
+  },
+};
+
+// Mapping filter buttons to their respective filter types
+const filterEvents = {
+  //id:buttonname
+  filterall: "all",
+  filtercompleted: "completed",
+  filternotcompleted: "notCompleted",
+  search: "search",
+  filterBtn: "dateRange",
+};
+
+// Listen for `input` changes in the search field
+view.setEventListener("search", "input", () => {
+  const searchTerm = view.getElement("search").value;
+  console.log("Search Term Changed:", searchTerm);
+  const result = filters.search(searchTerm);
+  console.log("Search Results:", result);
+  view.display(result);
+});
+
+// Temporary storage for date range inputs
+let dateRangeInputs = { startDate: null, endDate: null };
+// Common function to handle date range filtering
+function handleDateRangeChange(changedField, value) {
+  dateRangeInputs[changedField] = value;
+  console.log(`${changedField} Selected:`, value);
+  if (dateRangeInputs.startDate && dateRangeInputs.endDate) {
+    const result = filters.dateRange(
+      dateRangeInputs.startDate,
+      dateRangeInputs.endDate
+    );
+    console.log("Filtered by Date Range:", result);
+    view.display(result);
+  }
+}
+// Set event listeners for date inputs
+view.setEventListener("filterStartDate", "change", () => {
+  handleDateRangeChange("startDate", view.getElement("filterStartDate").value);
+});
+view.setEventListener("filterEndDate", "change", () => {
+  handleDateRangeChange("endDate", view.getElement("filterEndDate").value);
+});
+
+// Existing dynamic filter setup for buttons (e.g., all, completed, notCompleted)
+Object.keys(filterEvents).forEach((elementId) => {
+  if (elementId !== "search" && elementId !== "filterBtn") {
+    view.setEventListener(elementId, "click", () => {
+      const filterType = filterEvents[elementId];
+      console.log("Filter Type:", filterType);
+      const result = filters[filterType]();
+      console.log("Filtered Results:", result);
+      view.display(result);
+    });
+  }
+});
+
+// Handle category filtering
+console.log(Array.isArray(model.category));
+["workg", "homeg", "personalg"].forEach((id) => {
+  const category = id.replace("g", "");
+  view.setEventListener(id, "click", () => {
+    model.currentCategory = category;
+    view.display(filters.category(model.currentCategory)); // Use `view.display`
+  });
+});
+
+// Initial display of all data
+view.display(model.data);

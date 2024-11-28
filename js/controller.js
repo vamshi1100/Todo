@@ -1,149 +1,162 @@
 import { model } from "../js/model.js";
-import { display } from "../js/view.js";
+import { view } from "../js/view.js";
 
-// Variable to store the current selected category
-let currentCategory = null;
+class Controller {
+  constructor(model, view) {
+    this.model = model;
+    this.view = view;
+    this.dateRangeInputs = { startDate: null, endDate: null };
+    this.filters = {
+      all: () => this.model.data,
+      completed: () => this.model.data.filter((elem) => elem.checked === true),
+      notCompleted: () =>
+        this.model.data.filter((elem) => elem.checked === false),
+      category: (category) =>
+        this.model.data.filter((item) => item.category === category),
+      search: (searchTerm) => {
+        return this.model.data.filter((elem) =>
+          elem.text.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      },
+      dateRange: (startDate, endDate) => {
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+        return this.model.data.filter((item) => {
+          const itemStartDate = item.startDate
+            ? new Date(item.startDate)
+            : null;
+          const itemEndDate = item.endDate ? new Date(item.endDate) : null;
 
-// Event listeners for category buttons
-document.getElementById("work").addEventListener("click", () => {
-  currentCategory = "work";
-  console.log("Selected category: Work");
-});
+          const isStartDateValid = start ? itemStartDate >= start : true;
+          const isEndDateValid = end ? itemEndDate <= end : true;
 
-document.getElementById("home").addEventListener("click", () => {
-  currentCategory = "home";
-  console.log("Selected category: Home");
-});
+          return isStartDateValid && isEndDateValid;
+        });
+      },
+    };
+    this.filterEvents = {
+      filterall: "all",
+      filtercompleted: "completed",
+      filternotcompleted: "notCompleted",
+      search: "search",
+      filterBtn: "dateRange",
+    };
 
-document.getElementById("personal").addEventListener("click", () => {
-  currentCategory = "personal";
-  console.log("Selected category: Personal");
-});
-
-// Handle adding a new item or updating an existing one
-document.getElementById("add").addEventListener("click", () => {
-  let inputValue = document.getElementById("input").value.trim(); // Get input value
-  let index = document.getElementById("input").dataset.index;
-
-  const startDateInput = document.getElementById("startDate");
-  const endDateInput = document.getElementById("endDate");
-
-  let startDate = startDateInput.value;
-  let endDate = endDateInput.value;
-
-  console.log("Adding or updating item with value:", inputValue);
-  console.log("Index for editing:", index);
-  console.log("Selected category:", currentCategory);
-
-  // Validate that there is input and a selected category
-  if (inputValue && currentCategory) {
-    if (index !== undefined) {
-      // If editing an existing item
-      model.updateItem(index, inputValue, startDate, endDate, currentCategory);
-    } else {
-      // If adding a new item
-      model.addItem(inputValue, startDate, endDate, currentCategory);
-    }
-
-    // Refresh the view after item is added/updated
-    display(model.data);
-    console.log("Updated Data:", model.data);
-  } else {
-    console.log("No input or category selected.");
+    this.initialize();
   }
 
-  // Reset the input field and index
-  document.getElementById("input").value = "";
-  delete document.getElementById("input").dataset.index;
-});
+  initialize() {
+    this.setupCategoryListeners();
+    this.setupAddButtonListener();
+    this.setupSearchListener();
+    this.setupDateRangeListeners();
+    this.setupFilterButtons();
+    this.setupCustomCategoryListeners();
+    this.view.display(this.model.data); // Initial data display
+  }
 
-// Initial data display
-display(model.data);
+  setupCategoryListeners() {
+    this.model.category.forEach((category) => {
+      this.view.setEventListener(category, "click", () => {
+        this.model.currentCategory = category;
+        console.log("Selected Category:", category);
+      });
+    });
+  }
 
-//*************************************************************************************************** */
-document.getElementById("filterall").addEventListener("click", () => {
-  display(model.data);
-});
+  setupAddButtonListener() {
+    this.view.setEventListener("add", "click", () => {
+      const inputValue = this.view.getElement("input").value.trim();
+      const index = this.view.getElement("input").dataset.index;
 
-document.getElementById("filtercompleted").addEventListener("click", () => {
-  let op = model.data;
-  let filterop = op.filter((elem) => {
-    return elem.checked == true;
-  });
-  display(filterop);
-});
+      const startDate = this.view.getElement("startDate").value;
+      const endDate = this.view.getElement("endDate").value;
 
-document.getElementById("filternotcompleted").addEventListener("click", () => {
-  let op = model.data;
-  let filterop = op.filter((elem) => {
-    return elem.checked == false;
-  });
-  display(filterop);
-});
+      if (inputValue && this.model.currentCategory) {
+        if (index !== undefined) {
+          this.model.updateItem(
+            index,
+            inputValue,
+            startDate,
+            endDate,
+            this.model.currentCategory
+          );
+        } else {
+          this.model.addItem(
+            inputValue,
+            startDate,
+            endDate,
+            this.model.currentCategory
+          );
+        }
+        this.view.display(this.model.data);
+      } else {
+        console.log("No input or category selected.");
+      }
 
-//search
-document.getElementById("search").addEventListener("input", () => {
-  let searchTerm = document.getElementById("search").value.toLowerCase();
-  let op = model.data;
+      this.view.getElement("input").value = "";
+      delete this.view.getElement("input").dataset.index;
+    });
+  }
 
-  let filterop = op.filter((elem) => {
-    return elem.text.toLowerCase().includes(searchTerm);
-  });
+  setupSearchListener() {
+    this.view.setEventListener("search", "input", () => {
+      const searchTerm = this.view.getElement("search").value;
+      const result = this.filters.search(searchTerm);
+      this.view.display(result);
+    });
+  }
 
-  display(filterop);
-});
+  handleDateRangeChange(changedField, value) {
+    this.dateRangeInputs[changedField] = value;
+    if (this.dateRangeInputs.startDate && this.dateRangeInputs.endDate) {
+      const result = this.filters.dateRange(
+        this.dateRangeInputs.startDate,
+        this.dateRangeInputs.endDate
+      );
+      this.view.display(result);
+    }
+  }
 
-// Function to filter and display items based on selected category
-function filterByCategory(category) {
-  currentCategory = category;
-  console.log("Selected category:", currentCategory);
+  setupDateRangeListeners() {
+    this.view.setEventListener("filterStartDate", "change", () => {
+      this.handleDateRangeChange(
+        "startDate",
+        this.view.getElement("filterStartDate").value
+      );
+    });
 
-  // Filter the data based on the selected category
-  const filteredData = model.data.filter(
-    (item) => item.category === currentCategory
-  );
+    this.view.setEventListener("filterEndDate", "change", () => {
+      this.handleDateRangeChange(
+        "endDate",
+        this.view.getElement("filterEndDate").value
+      );
+    });
+  }
 
-  // Display the filtered data
-  display(filteredData);
+  setupFilterButtons() {
+    Object.keys(this.filterEvents).forEach((elementId) => {
+      if (elementId !== "search" && elementId !== "filterBtn") {
+        this.view.setEventListener(elementId, "click", () => {
+          const filterType = this.filterEvents[elementId];
+          const result = this.filters[filterType]();
+          this.view.display(result);
+        });
+      }
+    });
+  }
+
+  setupCustomCategoryListeners() {
+    ["workg", "homeg", "personalg"].forEach((id) => {
+      const category = id.replace("g", "");
+      this.view.setEventListener(id, "click", () => {
+        this.model.currentCategory = category;
+        this.view.display(this.filters.category(this.model.currentCategory));
+      });
+    });
+  }
 }
 
-// Event listeners for category buttons
-document.getElementById("workg").addEventListener("click", () => {
-  filterByCategory("work"); // Filter items by 'work' category
-});
-
-document.getElementById("homeg").addEventListener("click", () => {
-  filterByCategory("home"); // Filter items by 'home' category
-});
-
-document.getElementById("personalg").addEventListener("click", () => {
-  filterByCategory("personal"); // Filter items by 'personal' category
-});
-
-// Function to filter items based on the date range
-function filterItemsByDateRange(startDate, endDate) {
-  // Convert the start and end date strings into Date objects
-  const start = startDate ? new Date(startDate) : null;
-  const end = endDate ? new Date(endDate) : null;
-
-  // Filter the items based on the start and end date range
-  const filteredData = model.data.filter((item) => {
-    const itemStartDate = item.startDate ? new Date(item.startDate) : null;
-    const itemEndDate = item.endDate ? new Date(item.endDate) : null;
-
-    const isStartDateValid = start ? itemStartDate >= start : true;
-
-    const isEndDateValid = end ? itemEndDate <= end : true;
-    return isStartDateValid && isEndDateValid;
-  });
-
-  display(filteredData);
-}
-
-document.getElementById("filterBtn").addEventListener("click", () => {
-  const startDate = document.getElementById("filterStartDate").value;
-  const endDate = document.getElementById("filterEndDate").value;
-  filterItemsByDateRange(startDate, endDate);
-});
-
-display(model.data);
+// Initialize the Controller
+const controller = new Controller(model, view);
+console.log(controller);

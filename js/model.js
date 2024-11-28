@@ -1,10 +1,10 @@
 class Model {
-  constructor() {}
+  constructor() {
+    this.currentCategory = null;
+    this.category = ["work", "home", "personal"];
+  }
 
   get data() {
-    // document
-    //   .getElementById(elementId)
-    //   .addEventListener(eventName, eventHandler);
     return JSON.parse(localStorage.getItem("data")) || [];
   }
 
@@ -21,24 +21,20 @@ class Model {
       endDate: endDate || null,
       category: category || null,
     });
-
     this.data = data;
   }
 
-  // Update existing todo item by index
   updateItem(index, value, startDate, endDate, category) {
     let data = this.data;
-
     if (data[index]) {
       data[index].text = value;
       data[index].startDate = startDate || null;
       data[index].endDate = endDate || null;
-      data[index].category = category || null; // Update category
+      data[index].category = category || null;
       this.data = data;
     }
   }
 
-  // Update checked state of a todo item
   updateCheckedState(index, checked) {
     let data = this.data;
     if (data[index]) {
@@ -47,7 +43,6 @@ class Model {
     }
   }
 
-  // Delete a todo item by index
   deleteItem(index) {
     let data = this.data;
     data.splice(index, 1);
