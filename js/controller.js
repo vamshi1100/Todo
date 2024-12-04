@@ -1,6 +1,3 @@
-import { model } from "../js/model.js";
-import { view } from "../js/view.js";
-
 class Controller {
   constructor(model, view) {
     this.model = model;
@@ -13,11 +10,10 @@ class Controller {
         this.model.data.filter((elem) => elem.checked === false),
       category: (category) =>
         this.model.data.filter((item) => item.category === category),
-      search: (searchTerm) => {
-        return this.model.data.filter((elem) =>
+      search: (searchTerm) =>
+        this.model.data.filter((elem) =>
           elem.text.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      },
+        ),
       dateRange: (startDate, endDate) => {
         const start = startDate ? new Date(startDate) : null;
         const end = endDate ? new Date(endDate) : null;
@@ -41,18 +37,6 @@ class Controller {
       search: "search",
       filterBtn: "dateRange",
     };
-
-    this.initialize();
-  }
-
-  initialize() {
-    this.setupCategoryListeners();
-    this.setupAddButtonListener();
-    this.setupSearchListener();
-    this.setupDateRangeListeners();
-    this.setupFilterButtons();
-    this.setupCustomCategoryListeners();
-    this.view.display(this.model.data); // Initial data display
   }
 
   setupCategoryListeners() {
@@ -157,6 +141,4 @@ class Controller {
   }
 }
 
-// Initialize the Controller
-const controller = new Controller(model, view);
-console.log(controller);
+export default Controller;
