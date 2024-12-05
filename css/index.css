@@ -1,294 +1,142 @@
-* {
-    font-family: 'Arial', sans-serif;
-    box-sizing: border-box;
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
     margin: 0;
     padding: 0;
 }
 
-body {
-    background-color: #f5f5f5;
-    color: #333;
-    font-size: 16px;
-}
-
 .maincontainer {
     display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
-    padding: 20px;
-    gap: 40px;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-h1 {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-#firstcontainer {
-    width: 100%;
-    display: flex;
     justify-content: space-between;
-    margin-bottom: 40px;
-    gap: 20px;
-    align-items: center;
+    padding: 20px;
 }
 
+/* Container Styles */
+.container {
+    flex: 1;
+    margin-right: 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading Styles */
+h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Input and Button Styles */
 #input {
-    width: 100%;
-    max-width: 300px;
-    padding: 12px;
+    width: calc(100% - 100px);
+    padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+    border-radius: 4px;
+    margin-right: 10px;
 }
 
-#input:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-#add {
-    padding: 12px 20px;
-    background-color: #007bff;
+button {
+    padding: 10px 15px;
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
+    background-color: #007bff;
     color: white;
-    font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 }
 
-#add:hover {
+button:hover {
     background-color: #0056b3;
 }
 
 .datebetween {
-    display: flex;
-    gap: 10px;
+    margin: 10px 0;
 }
 
 .datepick {
     padding: 10px;
-    border-radius: 8px;
     border: 1px solid #ccc;
-    width: 140px;
-    transition: all 0.3s ease;
+    border-radius: 4px;
+    margin-right: 10px;
 }
 
-.datepick:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-.groupby {
-    display: flex;
-    gap: 10px;
-}
-
-.groupbybtn {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.groupbybtn:hover {
-    background-color: #218838;
-}
-
-#addcontainer {
-    width: 100%;
-    max-width: 950px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.todo-item {
-    background-color: #fff;
-    padding: 15px;
+/* Group By Button Styles */
+.groupby,
+.groupbycategory {
     margin: 10px 0;
-    width: 100%;
-    max-width: 950px;
-    display: flex;
-    justify-content: space-between;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
 }
 
-.todo-item:hover {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.groupbybtn,
+.groupbycategoryfilter {
+    background-color: #6c757d;
 }
 
-.todo-item .items {
-    width: 200px;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 1rem;
+.groupbybtn:hover,
+.groupbycategoryfilter:hover {
+    background-color: #5a6268;
 }
 
-.items button {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.items button:hover {
-    background-color: #c82333;
-}
-
+/* Features Section */
 .features {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 20px;
-    max-width: 500px;
+    width: 250px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .filter,
 .search,
 .filterdate,
 .groupbycategory {
-    width: 100%;
-    text-align: center;
+    margin-bottom: 20px;
 }
 
-.filter button,
-.search input,
-.filterdate input,
-.groupbycategory button {
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.filter h1,
+.search h1,
+.filterdate h1,
+.groupbycategory h1 {
+    font-size: 20px;
+    color: #333;
 }
 
-.filter button {
-    background-color: #007bff;
-    border: none;
-    color: white;
-}
-
-.filter button:hover {
-    background-color: #0056b3;
-}
-
-.search input {
-    width: 100%;
-    max-width: 350px;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
-
-.filterdate input {
-    width: 140px;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-.filterdate button {
-    background-color: #28a745;
-    border: none;
-    color: white;
-}
-
-.filterdate button:hover {
-    background-color: #218838;
-}
-
-.groupbycategory {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.groupbycategory button {
-    background-color: #ffc107;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
+/* Filter Button Styles */
+#filterall,
+#filtercompleted,
+#filternotcompleted,
 #filterBtn {
-    background-color: #070fff;
-    color: white;
-    border: none;
+    width: 100%;
     padding: 10px;
-    border-radius: 8px;
-    font-size: 1rem;
+    margin: 5px 0;
 }
 
-.groupbycategory button:hover {
-    background-color: #e0a800;
+/* Todo Item Styles */
+.todo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 10px 0;
+    background-color: #fff;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 768px) {
-    .maincontainer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-    }
+.items {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    .container {
-        width: 100%;
-    }
+.items span {
+    margin-left: 10px;
+}
 
-    #firstcontainer {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-    }
-
-    #input {
-        width: 100%;
-    }
-
-    .datebetween {
-        width: 100%;
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .groupby {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .todo-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .features {
-        width: 100%;
-    }
+.items input[type="checkbox"] {
+    margin-right: 10px;
 }
